@@ -1,9 +1,7 @@
 #!/bin/env ruby
 # frozen_string_literal: true
 
-require 'csv'
-require 'pry'
-require 'scraped'
+require 'every_politician_scraper/scraper_data'
 
 # TODO: fetch data from the individual member pages
 class Legislature
@@ -42,10 +40,4 @@ class Legislature
 end
 
 url = 'https://www.parliament.gov.sg/mps/list-of-current-mps'
-data = Legislature::Members.new(response: Scraped::Request.new(url: url).response).members
-
-header = data.first.keys.to_csv
-rows = data.map { |row| row.values.to_csv }
-abort 'No results' if rows.count.zero?
-
-puts header + rows.join
+puts EveryPoliticianScraper::ScraperData.new(url).csv

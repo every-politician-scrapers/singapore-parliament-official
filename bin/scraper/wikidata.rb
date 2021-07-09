@@ -1,13 +1,10 @@
 #!/bin/env ruby
 # frozen_string_literal: true
 
-require 'cgi'
-require 'csv'
-require 'scraped'
+require 'every_politician_scraper/wikidata_query'
 
-WIKIDATA_SPARQL_URL = 'https://query.wikidata.org/sparql?query=%s'
-
-memberships_query = <<SPARQL
+agent = 'every-politican-scrapers/singapore-parliament-official'
+query = <<SPARQL
   SELECT (STRAFTER(STR(?member), STR(wd:)) AS ?item) ?name
   WHERE {
     ?member p:P39 ?ps .
@@ -21,10 +18,4 @@ memberships_query = <<SPARQL
   ORDER BY ?name
 SPARQL
 
-url = WIKIDATA_SPARQL_URL % CGI.escape(memberships_query)
-headers = {
-  'User-Agent' => 'every-politican-scrapers/singapore-parliament-official',
-  'Accept' => 'text/csv',
-}
-
-puts Scraped::Request.new(url: url, headers: headers).response.body
+puts EveryPoliticianScraper::WikidataQuery.new(query, agent).csv
